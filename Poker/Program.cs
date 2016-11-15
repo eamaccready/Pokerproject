@@ -8,93 +8,95 @@ using System.Threading.Tasks;
 //dgarber@microsoft.com for help!
 namespace Poker
 {
-    class Card : IComparable
+    // make cards enums.
+    enum CardSuit { Clubs, Diamonds, Hearts, Spades };
+    enum CardRank
     {
-        public char suit; //CHDS 
-        public int rank;  // 2=2, K=13, A = 14
+        two,
+        three,
+        four,
+        five,
+        six,
+        seven,
+        eight,
+        nine,
+        ten,
+        jack,
+        queen,
+        king,
+        ace
+    }
 
-        public Card()// why is method overloaded? What should this do?
+    // Create Card class.
+    class Card //: IComparable
+    {
+        public CardSuit suit;
+        public CardRank rank;
+
+        public Card(CardSuit suit, CardRank rank)
         {
+            this.suit = suit;
+            this.rank = rank;
+        }
+    }
 
+    // Create Hand Class.
+    class Hand // make array and dictionary of 5 Cards.
+    {
+        private Card[] elements;
+        public Hand(Card[] cards)// need to get from a Deal().
+        {
+            //Sorted array of cards from deck/deal.
+            elements = cards.OrderBy(x => x.rank).ToArray();//change var name or overwrite?
         }
 
-        public Card(string str)//method to process cardtype input.
+        //Add dict constructor with same deal so you can get counts of the same rank.
+        // Key is rank, value is counts.
+        private Dictionary<CardRank, int> HandCounts = new Dictionary<CardRank, int>();// Correct? Constructor or Method?
+        // Loop through hand and collect counts of CardRank.
+    }
+
+    //Create Deck Class.
+    class Deck // move GetHand() here and return new Hand.
+    {
+        private List<Card> deck = new List<Card>();
+
+        // Loop through enums to get all unique values and append to deck.
+        public Deck()
         {
-            str = str.ToUpper();// converts all input to upper case.
-            foreach (char c in str)
+            foreach (CardSuit suit in Enum.GetValues(typeof(CardSuit)))
             {
-                switch (c) // is this the best way to handle?
+                foreach (CardRank rank in Enum.GetValues(typeof(CardRank)))
                 {
-                    case 'C':
-                    case 'D':
-                    case 'H':
-                    case 'S':
-                        suit = c;
-                        break;
-                    case 'A':
-                        rank = 14;
-                        break;
-                    case 'K':
-                        rank = 13;
-                        break;
-                    case 'Q':
-                        rank = 12;
-                        break;
-                    case 'J':
-                        rank = 11;
-                        break;
-                    case 'T':// should I make a case for T and 10? or is string only taking 2 spots as input?
-                        rank = 10;
-                        break;
-                    case '9':
-                    case '8':
-                    case '7':
-                    case '6':
-                    case '5':
-                    case '4':
-                    case '3':
-                    case '2':
-                        rank = c - '0'; //idiom to get int value, I think...
-                        break;
+                    deck.Add(new Card(suit, rank));
                 }
             }
-
-            if (rank == 0)
-                Console.WriteLine("Please enter a rank for " + str);
-            Console.ReadLine();
         }
 
-        bool isValid()
+        public static Hand GetHand()// do I not use the type Hand here to call method?
         {
-            return suit != '\0' && rank >= 2 && rank <= 14;
-        }
+            //Shuffle deck(Randomize)pull, insert into array. no replacement.
+            
+            //Deal a hand of 5 Cards.
 
-        public int CompareTo(object obj)
-        {
-            Card c = obj as Card;
-            return rank - c.rank;
+            return NewHand;
         }
+         
+        // method to get a new hand.
     }
 
-    class Hand // make array and dictionary of Cards
-    {
 
-    }
 
     class Program
     {
         static void Main(string[] args)
         {
-            Card[] hand = GetHand(args);//Change to a new hand = GetHand, since a hand is array of cards.
 
-            //Card[] hand = new Card[5];
-            // hand[0] = new Card();
-            //hand[0].suit = 'C';
-            //hand[0].rank = 8;
-            //....
-            Array.Sort(hand);
+            //Deal an new hand.
+            Hand NameHand = GetHand(args);//Change to a new hand = GetHand, since a hand is array of cards.
 
-            //Prints hand to end user in console.
+            //print results to end user.
+            /* //Prints results of hand to end user.
             if (isStraightFlush(hand))
                 Console.WriteLine("Straight flush!");
             else if (isFourOfKind(hand))
@@ -115,95 +117,95 @@ namespace Poker
                 Console.WriteLine("Your highest card is: " + hand[5]); // print last value of array since is sorted.
 
             Console.ReadLine();// I think this is correct since there's fake brackets here...
-        }
+        }*/
+
+/*
+// function to get a new hand.
+static Hand GetHand(string[] args)// This is affected with a hand class.
+{
+ Hand hand = new Hand();
+int index = 0;
+foreach (string a in args)
+{
+    if (index >= 5)
+        break;
+    Card c = new Card(a);
+    hand[index++] = c;
+}
+
+while (index < 5)
+{
+    hand[index++] = Deal();
+}
+return Hand;
+}
+
+//Make function to deal a hand. 
+static Card Deal()
+{
+if (deck == null | dealIndex >= 52)
+{
+    deck = new Card[52];
+    int index = 0;
+    // todo : one of each card == loop!
+    //shuffle (randomize)
+}
+return deck[dealIndex++];
+} //end class program.
 
 
-        static Card[] GetHand(string[] args)// might need to change to hand class? not sure.
-        {
-            Card[] hand = new Card[5];
-            int index = 0;
-            foreach (string a in args)
-            {
-                if (index >= 5)
-                    break;
-                Card c = new Card(a);
-                hand[index++] = c;
-            }
-
-            while (index < 5)
-            {
-                hand[index++] = Deal();
-            }
-            return hand;
-        }
 
 
-        // create a deck and deal a random card.
-        static Card[] deck = null;
-        static int dealIndex = 0;
+// function to evaluate if hand is straight flush.
+static bool isStraightFlush(Card[] hand)
+{
+return isStraightFlush(hand) && isStraightFlush(hand);
+}
 
-        static Card Deal()
-        {
-            if (deck == null | dealIndex >= 52)
-            {
-                deck = new Card[52];
-                int index = 0;
-                // todo : one of each card == loop!
-                //shuffle (randomize)
-            }
-            return deck[dealIndex++];
-        } //end class program.
+static bool isFlush(Card[] hand)
+{
+for (int i = 1; i < hand.Length; i++)
+{
+    if (hand[i].suit != hand[0].suit)
+        return false;
+}
+return true;
+}
 
-        // function to evaluate if hand is straight flush.
-        static bool isStraightFlush(Card[] hand)
-        {
-            return isStraightFlush(hand) && isStraightFlush(hand);
-        }
+static bool isStraight(Card[] hand)//Assuming sorted.
+{
+for (int i = 1; i < hand.Length; i++)
+{
+    if (hand[i].rank != hand[i - 1].rank + 1)
+        return false;
+}
+return true;
+}
 
-        static bool isFlush(Card[] hand)
-        {
-            for (int i = 1; i < hand.Length; i++)
-            {
-                if (hand[i].suit != hand[0].suit)
-                    return false;
-            }
-            return true;
-        }
+// 
+static bool isFullhouse(Card[] hand)
+{
+//if cardCounts counts 3==true && 2==true. return true.
+return true;
+}
 
-        static bool isStraight(Card[] hand)//Assuming sorted.
-        {
-            for (int i = 1; i < hand.Length; i++)
-            {
-                if (hand[i].rank != hand[i - 1].rank + 1)
-                    return false;
-            }
-            return true;
-        }
+static bool isThreeOfKind(Card[] hand)
+{
+//If cardMatches counts ==3 is true && 2 is false.
+return true;
+}
 
-        // 
-        static bool isFullhouse(Card[] hand)
-        {
-            //if cardCounts counts 3==true && 2==true. return true.
-            return true;
-        }
-
-        static bool isThreeOfKind(Card[] hand)
-        {
-            //If cardMatches counts ==3 is true && 2 is false.
-            return true;
-        }
-
-        static bool isTwoPair(Card[] hand)
-        {
-            //if cardMatches counts == 2 * 2 . return true
-            return true;
-        }
-        static bool isPair(Card[] hand)
-        {
-            //if cardMatches counts == 2 * 1. return true 
-            return true;
-        }
-    }
+static bool isTwoPair(Card[] hand)
+{
+//if cardMatches counts == 2 * 2 . return true
+return true;
+}
+static bool isPair(Card[] hand)
+{
+//if cardMatches counts == 2 * 1. return true 
+return true;
+}
+}
 }
 
 // if counts == 3 && counts ==2; return is Full house
@@ -211,3 +213,4 @@ namespace Poker
 // else if counts == 2 and ==2 again return is 2 pair
 //else if counts == 2 and not 2 again return is pair
 // else return high card from sorted array.
+                                           
