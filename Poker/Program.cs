@@ -176,12 +176,6 @@ namespace Poker
             return true;
         }
 
-        static void cardCounts(Card[] hand)// Maybe void? I want counts of each rank.
-        {
-            // make dictionary of all ranks so you can get counts.
-            Dictionary<string, int>;
-        }
-
         // 
         static bool isFullhouse(Card[] hand)
         {
