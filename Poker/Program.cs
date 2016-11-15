@@ -61,6 +61,7 @@ namespace Poker
 
             if (rank == 0)
                 Console.WriteLine("Please enter a rank for " + str);
+            Console.ReadLine();
         }
 
         bool isValid()
@@ -112,9 +113,12 @@ namespace Poker
                 Console.WriteLine("A pair!"); //also print value of pair?
             else
                 Console.WriteLine("Your highest card is: " + hand[5]); // print last value of array since is sorted.
+
+            Console.ReadLine();// I think this is correct since there's fake brackets here...
         }
 
-        static Card[] GetHand(string[] args)
+
+        static Card[] GetHand(string[] args)// might need to change to hand class? not sure.
         {
             Card[] hand = new Card[5];
             int index = 0;
