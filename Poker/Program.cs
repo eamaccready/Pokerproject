@@ -75,12 +75,16 @@ namespace Poker
         }
     }
 
+    class Hand // make array and dictionary of Cards
+    {
+
+    }
 
     class Program
     {
         static void Main(string[] args)
         {
-            Card[] hand = GetHand(args);//eventually class = [] + dict.
+            Card[] hand = GetHand(args);//Change to a new hand = GetHand, since a hand is array of cards.
 
             //Card[] hand = new Card[5];
             // hand[0] = new Card();
